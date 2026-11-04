@@ -1,0 +1,29 @@
+.logo {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #c1f477, #9bd34e);
+    color: #11160b;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 4px 18px #c1f47735;
+    transition: .3s ease;
+    flex-shrink: 0;
+}
+
+.logo svg {
+    width: 25px;
+    height: 25px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.brand:hover .logo {
+    transform: scale(1.08) rotate(-5deg);
+}
