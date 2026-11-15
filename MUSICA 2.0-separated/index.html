@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101116"><title>MUSICA 2.0 — Your Personal Music Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="brand"><div class="logo">♫</div><div><strong>MUSICA <span style="color:var(--accent);font-size:11px">2.0</span></strong><small>YOUR PERSONAL MUSIC LIBRARY</small></div></div>
+  <div class="top-actions"><span class="sync-pill"><i></i> Saved on this device</span><button class="btn ghost" id="importBtn">↑ Import</button><button class="btn ghost" id="exportBtn">↓ Export</button><button class="btn ghost" id="settingsBtn">⚙ API Setup</button><button class="btn primary" id="addBtn">＋ Add playlist</button><input id="fileInput" type="file" accept=".json,application/json" hidden></div>
+</header>
+<section class="hero">
+  <div><div class="eyebrow">Your sound, your universe</div><h1>Every mood.<br>One library.</h1><p>Satu rumah untuk semua playlist yang kamu suka. Keep every soundtrack close.</p></div>
+  <div class="hero-stats"><div class="stat"><strong id="total">0</strong><span>Playlists</span></div><div class="stat"><strong id="favs">0</strong><span>Favorites</span></div><div class="stat"><strong id="platforms">0</strong><span>Platforms</span></div></div>
+</section>
+<section class="featured">
+  <div class="welcome-card"><div class="eyebrow">✦ YOUR PERSONAL SOUNDTRACK</div><h2>A place for every version of you.</h2><p>Simpan playlist untuk setiap suasana hati — dari pagi yang tenang sampai malam yang penuh pikiran. Semua tertata, semua milikmu.</p></div>
+  <div class="mini-card"><span class="mini-label">YOUR LIBRARY STATUS</span><strong id="statusText">Ready for your music.</strong><small id="statusSub">Add your first playlist to get started.</small></div>
+</section>
+<div class="toolbar"><div class="searchbox"><span>⌕</span><input id="search" placeholder="Cari playlist, genre, atau platform..."></div><div class="filters" id="filters"><button class="filter active" data-filter="all">All</button><button class="filter" data-filter="favorite">♥ Favorites</button><button class="filter" data-filter="Spotify">Spotify</button><button class="filter" data-filter="YouTube Music">YouTube Music</button><button class="filter" data-filter="other">Other platforms</button></div></div>
+<div class="section-head"><h2 id="sectionTitle">Your collection</h2><span id="countLabel">0 playlists</span></div>
+<main class="grid" id="grid"></main>
+<section class="player" id="player"><div class="player-head"><div><strong id="playerTitle">Now playing</strong><br><span id="playerPlatform">Embedded player</span></div><button class="btn ghost" id="closePlayer">Close player ×</button></div><div class="embed-wrap" id="embed"></div><p class="player-hint">Player ditampilkan melalui layanan resmi platform. Beberapa playlist mungkin tidak mendukung embed atau meminta kamu membuka aplikasi/platform aslinya.</p></section>
+<footer><span>© 2026 MUSICA 2.0 · Made for the love of music.</span><span>Your taste. Your space. Your soundtrack. ✦</span></footer>
+</div>
+
+<div class="backdrop" id="backdrop"><form class="modal" id="form">
+<div class="modal-head"><h3 id="modalTitle">Add a playlist</h3><button class="close" type="button" id="close">×</button></div>
+<input id="itemId" type="hidden">
+<div class="field"><label>PLAYLIST NAME *</label><input id="name" required maxlength="70" placeholder="e.g. Songs for slow nights"></div>
+<div class="row2"><div class="field"><label>PLATFORM *</label><select id="platform"><option>Spotify</option><option>YouTube Music</option><option>YouTube</option><option>Apple Music</option><option>SoundCloud</option><option>Deezer</option><option>Other</option></select></div><div class="field"><label>GENRE / MOOD</label><input id="genre" maxlength="30" placeholder="Indie, chill, focus..."></div></div>
+<div class="field"><label>PLAYLIST URL *</label><input id="url" type="url" required placeholder="https://..."><div class="hint">Paste link playlist dari platform pilihanmu. MUSICA akan mencoba menampilkan embedded player jika didukung.</div></div>
+<div class="field"><label>COVER IMAGE URL (OPTIONAL)</label><input id="cover" type="url" placeholder="https://..."></div>
+<div class="field"><label>DAFTAR LAGU (OPSIONAL)</label><textarea id="tracks" placeholder="Masukkan satu judul lagu per baris&#10;Contoh:&#10;Sempurna — Andra and The Backbone&#10;Evaluasi — Hindia"></textarea><div class="hint">Untuk Spotify dan YouTube Music, daftar lagu akan diambil otomatis jika API sudah diatur. Isi manual hanya sebagai alternatif.</div></div>
+ <div class="field"><label>PERSONAL NOTE (OPTIONAL)</label><input id="note" maxlength="100" placeholder="A little soundtrack for rainy days..."></div>
+<div class="modal-actions"><button class="btn ghost" type="button" id="cancel">Cancel</button><button class="btn primary" type="submit">Save playlist</button></div>
+</form></div>
+<div class="backdrop" id="tracksBackdrop"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="tracksTitle">
+ <div class="modal-head"><div><h3 id="tracksTitle">Daftar lagu</h3><div class="hint" id="tracksSubtitle"></div></div><button class="close" type="button" id="closeTracks">×</button></div>
+ <div class="track-list" id="tracksList"></div><p class="hint">Metadata lagu ditampilkan dari API resmi platform. Spotify membatasi akses playlist tertentu hanya untuk pemilik atau kolaborator playlist.</p>
+ <div class="modal-actions"><button class="btn ghost" type="button" id="refreshTracks">↻ Refresh daftar lagu</button><button class="btn ghost" type="button" id="closeTracksBottom">Tutup</button></div>
+ </section></div>
+<div class="backdrop" id="settingsBackdrop"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+ <div class="modal-head"><h3 id="settingsTitle">Pengaturan API</h3><button class="close" type="button" id="closeSettings">×</button></div>
+ <div class="field"><label>SPOTIFY CLIENT ID</label><input id="spotifyClientId" autocomplete="off" placeholder="Masukkan Client ID Spotify"></div>
+ <div class="hint">Buat aplikasi di Spotify Developer Dashboard, aktifkan Authorization Code with PKCE, lalu daftarkan Redirect URI berikut secara persis:</div>
+ <div class="field"><input id="redirectUriDisplay" readonly></div>
+ <div class="field"><label>YOUTUBE DATA API KEY</label><input id="youtubeApiKey" autocomplete="off" placeholder="Masukkan API key Google"></div>
+ <div class="hint">API key YouTube sebaiknya dibatasi berdasarkan HTTP referrer dan YouTube Data API v3. Jangan masukkan Spotify Client Secret di sini.</div>
+ <div class="modal-actions"><button class="btn ghost" type="button" id="connectSpotify">Hubungkan Spotify</button><button class="btn ghost" type="button" id="disconnectSpotify">Putuskan Spotify</button><button class="btn ghost" type="button" id="cancelSettings">Batal</button><button class="btn primary" type="button" id="saveSettings">Simpan pengaturan</button></div>
+ </section></div>
+<div class="toast" id="toast"></div>
+<script src="script.js" defer></script>
+</body></html>
